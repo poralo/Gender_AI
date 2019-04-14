@@ -13,6 +13,14 @@ class Network:
             self.layers.append(2 * np.random.random((s2, s1)) - 1)
         
         self.error = 1
+
+    def load(self):
+        l1 = np.load("layer1.npy")
+        l2 = np.load("layer2.npy")
+        l3 = np.load("layer3.npy")
+        l4 = np.load("layer4.npy")
+        
+        self.layers = [l1, l2, l3, l4]
         
     def feedForward(self, a):
         """Retourne le résultat du réseau de neurones quand "a" est l'entrée"""
@@ -20,12 +28,12 @@ class Network:
             a = self.__sigmoid(np.dot(a, layer))
         return a
 
-    def train(self, input_data, epochs, eta):
+    def train(self, input_data, epochs, batch, eta):
         for j in range(epochs):
             np.random.shuffle(input_data)
-            self.backPropagation(input_data[:,:-1], np.array([input_data[:,-1]]).T, eta)
+            self.backPropagation(input_data[:batch,:-1], np.array([input_data[:batch,-1]]).T, eta)
 
-            if j % 10 == 0:
+            if j % 1000 == 0:
                 print(f'Error : {np.mean(np.abs(self.error))}')
         
         save("layer1.npy", self.layers[0])
